@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job Listings with Auto Suggestions</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .suggestions {
+      border: 1px solid #ddd;
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: white;
+      position: absolute;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .suggestion-item {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .suggestion-item:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-light sticky-top shadow-sm">
+      <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand" href="home.html">
+          <img src="./logo.png" alt="Hire & Get Hired Logo" width="50">
+          <img src="./logo1.png" alt="Hire & Get Hired Logo" width="120">
+        </a>
+  
+        <!-- Navbar toggler for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+  
+        <!-- Navbar links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav mx-auto gap-4">
+            <li class="nav-item">
+              <a class="nav-link" href="home.html">Home <span class="badge badge-custom">New</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="job-listings.html">Job Listings <span class="badge badge-custom">5+</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="about-us.html">About Us <span class="badge badge-custom">Info</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contact.html">Contact <span class="badge badge-custom">!</span></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+  <!-- Advanced Search -->
+  <div class="container py-5">
+    <h1 class="text-center mb-5 fw-bold text-success">Advanced Search for Jobs</h1>
+
+    <div class="row">
+      <div class="col-md-3">
+        <input type="text" id="searchTitle" class="form-control" placeholder="Search by Job Title" autocomplete="off">
+        <div id="titleSuggestions" class="suggestions"></div>
+      </div>
+      <div class="col-md-3">
+        <input type="text" id="searchLocation" class="form-control" placeholder="Search by Location" autocomplete="off">
+        <div id="locationSuggestions" class="suggestions"></div>
+      </div>
+      <div class="col-md-3">
+        <input type="text" id="searchCompany" class="form-control" placeholder="Search by Company" autocomplete="off">
+        <div id="companySuggestions" class="suggestions"></div>
+      </div>
+      <div class="col-md-3">
+        <input type="number" id="searchSalary" class="form-control" placeholder="Minimum Salary" autocomplete="off">
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <button class="btn btn-custom" id="searchBtn">Search</button>
+    </div>
+  </div>
+
+  <!-- Job Listings Section -->
+  <div class="container py-5">
+    <h1 class="text-center mb-5 fw-bold text-success">Available Jobs</h1>
+    <div class="row" id="jobsContainer">
+      <!-- Job cards dynamically added here -->
+    </div>
+    <p id="noJobsMessage" class="text-center text-danger" style="display:none;">No jobs available matching your search.
+    </p>
+  </div>
+
+  <script>
+    // Initial 10 Jobs data (simulating localStorage)
+    const defaultJobs = [
+      { jobTitle: 'Software Developer', companyName: 'TechCorp', location: 'New York', salary: 70000, description: 'Developing web applications.' },
+      { jobTitle: 'Product Manager', companyName: 'InnovateX', location: 'San Francisco', salary: 90000, description: 'Managing product lifecycle.' },
+      { jobTitle: 'UI/UX Designer', companyName: 'DesignWorks', location: 'Los Angeles', salary: 65000, description: 'Designing user-friendly interfaces.' },
+      { jobTitle: 'Data Analyst', companyName: 'DataPros', location: 'Chicago', salary: 60000, description: 'Analyzing large datasets.' },
+      { jobTitle: 'Project Manager', companyName: 'BuildTech', location: 'Seattle', salary: 80000, description: 'Leading tech projects.' },
+      { jobTitle: 'Backend Developer', companyName: 'CodeMasters', location: 'Austin', salary: 75000, description: 'Building backend systems.' },
+      { jobTitle: 'Digital Marketing Specialist', companyName: 'MarketingHub', location: 'Miami', salary: 55000, description: 'Handling digital marketing campaigns.' },
+      { jobTitle: 'Sales Executive', companyName: 'SalesForce', location: 'Boston', salary: 50000, description: 'Selling products and services.' },
+      { jobTitle: 'Graphic Designer', companyName: 'CreativeStudio', location: 'Denver', salary: 60000, description: 'Creating graphic designs for clients.' },
+      { jobTitle: 'HR Manager', companyName: 'PeopleFirst', location: 'Houston', salary: 70000, description: 'Managing human resources operations.' }
+    ];
+
+    // Load jobs from localStorage or set default jobs if no data exists
+    const jobs = JSON.parse(localStorage.getItem('jobs')) || defaultJobs;
+
+    // Function to display jobs
+    function displayJobs(jobsToDisplay) {
+      const jobsContainer = document.getElementById('jobsContainer');
+      const noJobsMessage = document.getElementById('noJobsMessage');
+      jobsContainer.innerHTML = ''; // Clear previous job listings
+      noJobsMessage.style.display = 'none'; // Hide "No jobs available" message
+
+      if (jobsToDisplay.length === 0) {
+        noJobsMessage.style.display = 'block'; // Show "No jobs available" message if no jobs match
+      } else {
+        jobsToDisplay.forEach((job, index) => {
+          const jobCard = `
+            <div class="col-md-6 mb-4">
+              <div class="card shadow-sm p-3 h-100">
+                <h4 class="text-success">${job.jobTitle}</h4>
+                <h6 class="text-muted">${job.companyName}</h6>
+                <p><strong>Location:</strong> ${job.location}</p>
+                <p><strong>Salary:</strong> $${job.salary || 'Not disclosed'}</p>
+                <p>${job.description}</p>
+                <a href="apply-job.html?job=${index}" class="btn btn-custom mt-auto">Apply Now</a>
+              </div>
+            </div>
+          `;
+          jobsContainer.innerHTML += jobCard;
+        });
+      }
+    }
+
+    // Show matching suggestions for search input
+    function showSuggestions(inputId, suggestionsId, key) {
+      const query = document.getElementById(inputId).value.toLowerCase();
+      const suggestionsDiv = document.getElementById(suggestionsId);
+      suggestionsDiv.innerHTML = ''; // Clear previous suggestions
+
+      if (query.length > 0) {
+        const filteredJobs = jobs.filter(job => job[key].toLowerCase().includes(query));
+        filteredJobs.forEach(job => {
+          const suggestionItem = document.createElement('div');
+          suggestionItem.classList.add('suggestion-item');
+          suggestionItem.innerHTML = job[key];
+          suggestionItem.onclick = function () {
+            document.getElementById(inputId).value = job[key];
+            suggestionsDiv.innerHTML = ''; // Clear suggestions after selecting one
+          };
+          suggestionsDiv.appendChild(suggestionItem);
+        });
+      }
+    }
+
+    // Event listeners for input fields
+    document.getElementById('searchTitle').addEventListener('input', function () {
+      showSuggestions('searchTitle', 'titleSuggestions', 'jobTitle');
+    });
+
+    document.getElementById('searchLocation').addEventListener('input', function () {
+      showSuggestions('searchLocation', 'locationSuggestions', 'location');
+    });
+
+    document.getElementById('searchCompany').addEventListener('input', function () {
+      showSuggestions('searchCompany', 'companySuggestions', 'companyName');
+    });
+
+    // Search functionality to filter jobs when the Search button is clicked
+    document.getElementById('searchBtn').addEventListener('click', function () {
+      const title = document.getElementById('searchTitle').value.toLowerCase();
+      const location = document.getElementById('searchLocation').value.toLowerCase();
+      const company = document.getElementById('searchCompany').value.toLowerCase();
+      const minSalary = parseInt(document.getElementById('searchSalary').value) || 0;
+
+      const filteredJobs = jobs.filter(job =>
+        (title === '' || job.jobTitle.toLowerCase().includes(title)) &&
+        (location === '' || job.location.toLowerCase().includes(location)) &&
+        (company === '' || job.companyName.toLowerCase().includes(company)) &&
+        job.salary >= minSalary
+      );
+
+      // Display filtered jobs
+      displayJobs(filteredJobs);
+    });
+
+    // Initial display of jobs (including default 10 jobs)
+    displayJobs(jobs);
+  </script>
+
+  <!-- Footer -->
+  <footer class="footer text-white py-4" style="background-color: #343a40; border-top: 5px solid #198754; ">
+    <div class="container text-center">
+      <div class="mb-4">
+          <img src="./logo.png" alt="Hire & Get Hired Logo" width="120" height="120" style="background-color: aliceblue; border-radius: 14px;">
+        <p class="mt-2">Follow us on social media</p>
+        <div class="social-icons d-flex justify-content-center gap-3">
+          <a href="#" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-linkedin fa-2x"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-youtube fa-2x"></i></a>
+        </div>
+      </div>
+      <hr class="border-secondary">
+      <div class="d-flex justify-content-between small">
+        <span>© 2025 | All rights reserved</span>
+        <div>
+          <a href="#" class="text-white text-decoration-none mx-2">Privacy Policy</a>
+          <a href="#" class="text-white text-decoration-none mx-2">Terms & Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

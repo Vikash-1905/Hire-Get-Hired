@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Post a Job</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-light sticky-top shadow-sm">
+      <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand" href="home.html">
+          <img src="./logo.png" alt="Hire & Get Hired Logo" width="50">
+          <img src="./logo1.png" alt="Hire & Get Hired Logo" width="120">
+        </a>
+  
+        <!-- Navbar toggler for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+  
+        <!-- Navbar links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav mx-auto gap-4">
+            <li class="nav-item">
+              <a class="nav-link" href="home.html">Home <span class="badge badge-custom">New</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="job-listings.html">Job Listings <span class="badge badge-custom">5+</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="about-us.html">About Us <span class="badge badge-custom">Info</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contact.html">Contact <span class="badge badge-custom">!</span></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+  <!-- Post a Job Form -->
+  <div class="container py-5">
+    <h1 class="text-center mb-5 fw-bold text-success">Post a Job</h1>
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <form id="postJobForm">
+          <div class="mb-3">
+            <label for="companyName" class="form-label">Company Name</label>
+            <input type="text" class="form-control" id="companyName" placeholder="Enter your company name" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="jobTitle" class="form-label">Job Title</label>
+            <input type="text" class="form-control" id="jobTitle" placeholder="Enter the job title" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="location" class="form-label">Job Location</label>
+            <input type="text" class="form-control" id="location" placeholder="Enter job location" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="salary" class="form-label">Salary (Optional)</label>
+            <input type="text" class="form-control" id="salary" placeholder="Enter salary offered">
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Job Description</label>
+            <textarea class="form-control" id="description" rows="5" placeholder="Describe the job role" required></textarea>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-custom">Post Job</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer text-white py-4" style="background-color: #343a40; border-top: 5px solid #198754; ">
+    <div class="container text-center">
+      <div class="mb-4">
+          <img src="./logo.png" alt="Hire & Get Hired Logo" width="120" height="120" style="background-color: aliceblue; border-radius: 14px;">
+        <p class="mt-2">Follow us on social media</p>
+        <div class="social-icons d-flex justify-content-center gap-3">
+          <a href="#" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-linkedin fa-2x"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-youtube fa-2x"></i></a>
+        </div>
+      </div>
+      <hr class="border-secondary">
+      <div class="d-flex justify-content-between small">
+        <span>© 2025 | All rights reserved</span>
+        <div>
+          <a href="#" class="text-white text-decoration-none mx-2">Privacy Policy</a>
+          <a href="#" class="text-white text-decoration-none mx-2">Terms & Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Post Job form submit handler
+document.getElementById('postJobForm').addEventListener('submit', function(event) {
+  event.preventDefault(); // Form reload se bacha lo
+
+  // Nayi job ko capture karna
+  const job = {
+    companyName: document.getElementById('companyName').value,
+    jobTitle: document.getElementById('jobTitle').value,
+    location: document.getElementById('location').value,
+    salary: document.getElementById('salary').value,
+    description: document.getElementById('description').value
+  };
+
+  // Default jobs agar localStorage mein koi job nahi hai
+  const defaultJobs = [
+    { jobTitle: 'Software Developer', companyName: 'TechCorp', location: 'New York', salary: 70000, description: 'Developing web applications.' },
+    { jobTitle: 'Product Manager', companyName: 'InnovateX', location: 'San Francisco', salary: 90000, description: 'Managing product lifecycle.' },
+    { jobTitle: 'UI/UX Designer', companyName: 'DesignWorks', location: 'Los Angeles', salary: 65000, description: 'Designing user-friendly interfaces.' },
+    { jobTitle: 'Data Analyst', companyName: 'DataPros', location: 'Chicago', salary: 60000, description: 'Analyzing large datasets.' },
+    { jobTitle: 'Project Manager', companyName: 'BuildTech', location: 'Seattle', salary: 80000, description: 'Leading tech projects.' },
+    { jobTitle: 'Backend Developer', companyName: 'CodeMasters', location: 'Austin', salary: 75000, description: 'Building backend systems.' },
+    { jobTitle: 'Digital Marketing Specialist', companyName: 'MarketingHub', location: 'Miami', salary: 55000, description: 'Handling digital marketing campaigns.' },
+    { jobTitle: 'Sales Executive', companyName: 'SalesForce', location: 'Boston', salary: 50000, description: 'Selling products and services.' },
+    { jobTitle: 'Graphic Designer', companyName: 'CreativeStudio', location: 'Denver', salary: 60000, description: 'Creating graphic designs for clients.' },
+    { jobTitle: 'HR Manager', companyName: 'PeopleFirst', location: 'Houston', salary: 70000, description: 'Managing human resources operations.' }
+  ];
+
+  // localStorage se jobs ko read karna ya default jobs ko set karna
+  let jobs = JSON.parse(localStorage.getItem('jobs')) || defaultJobs;
+
+  // Nayi job ko jobs array mein add karna
+  jobs.push(job);
+
+  // updated jobs array ko localStorage mein store karna
+  localStorage.setItem('jobs', JSON.stringify(jobs));
+
+  alert('Job posted successfully!');
+  window.location.href = 'job-listings.html'; // Redirect to the job listings page
+});
+
+</script>
+</body>
+</html>

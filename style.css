@@ -1,0 +1,41 @@
+
+    /* Custom Styles */
+    .nav-link:hover {
+      color: #198754; /* Change color on hover */
+    }
+
+    .carousel-item img {
+      transition: transform 1s ease; /* Smooth transition for images */
+    }
+
+    .carousel-item.active img {
+      transform: scale(1); /* Scale up the current image */
+    }
+
+    .section-headings {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+
+    .btn-custom {
+      background: linear-gradient(90deg, #4caf50, #8bc34a); /* Gradient button */
+      color: white;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-custom:hover {
+      transform: scale(1.05); /* Hover effect for button */
+    }
+
+    .badge-custom {
+      background-color: #ff5722; /* Custom badge color */
+    }
